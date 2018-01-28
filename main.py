@@ -2,9 +2,6 @@ import sqlite3
 conn = sqlite3.connect('client_data.db')
 c = conn.cursor()
 
-def PRAGMA_keys():
-    c.execute('PRAGMA foreign_keys')
-
 def create_table():
     # need to get ALL parameters later
     c.execute('PRAGMA foreign_keys = ON;')
@@ -24,11 +21,7 @@ def create_table():
 
 def enter_client(name, email, income):
     #need to get ALL parameters later
-    c.execute("INSERT INTO clients(name, email, income) VALUES(?,?,?)", (name, email, income))
+    data = c.execute("SELECT * FROM clients;")
+    id = len(data.fetchall())
+    c.execute("INSERT INTO clients(client_id, client_name, email, income) VALUES(?,?,?,?)", (id, name, email, income))
     conn.commit()
-    c.close()
-    conn.close()
-
-#test execute statements
-PRAGMA_keys()
-create_table()
