@@ -17,8 +17,8 @@ def create_table():
               'FOREIGN KEY(client) REFERENCES client(client_name), '
               'FOREIGN KEY(tag) REFERENCES tags(tag_name));')
 
+#won't crash if client is already in database
 def enter_client(name, email, income):
-    #won't crash if client is already in database
     c.execute("SELECT client_name FROM clients WHERE client_name = ?",
               (name,))
     exists = c.fetchone()
@@ -37,5 +37,19 @@ def enter_tag (tag_name):
     if exists:
         print("Tag already exists")
     else:
-        c.execute("INSERT INTO tags(tag_name) VALUES(?)", (tag_name))
+        c.execute("INSERT INTO tags(tag_name) VALUES(?)",
+                  (tag_name,))
+        conn.commit()
+
+def enter_client_tag(client, tag):
+    #not really sure if I'm doing this right...
+    c.execute("SELECT client, tag FROM client_tags "
+              "WHERE client = ? AND tag = ?",
+              (client, tag))
+    exists = c.fetchone()
+    if exists:
+        print(client + " has already been associated with " + tag + ".")
+    else:
+        c.execute("INSERT INTO client_tags(client, tag) VALUES(?,?)",
+                  client, tag)
         conn.commit()
